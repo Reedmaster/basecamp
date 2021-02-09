@@ -31,6 +31,15 @@ class ProjectsTest extends TestCase
         $this->get('/projects')->assertSee($attributes['title']);
     }
 
+    public function test_a_user_can_view_a_project()
+    {
+        $project = Project::factory()->create();
+
+        $this->get($project->path())
+            ->assertSee($project->title)
+            ->assertSee($project->description);
+    }
+
     public function test_a_project_requires_a_title()
     {
         $attributes = Project::factory()->raw(['title' => '']);

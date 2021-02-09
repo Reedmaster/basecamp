@@ -29,4 +29,14 @@ class ProjectsTest extends TestCase
 
         $this->get('/projects')->assertSee($attributes['title']);
     }
+
+    public function test_a_project_requires_a_title()
+    {
+        $this->post('/projects', [])->assertSessionHasErrors('title');
+    }
+
+    public function test_a_project_requires_a_description()
+    {
+        $this->post('/projects', [])->assertSessionHasErrors('title');
+    }
 }

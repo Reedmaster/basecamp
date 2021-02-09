@@ -9,7 +9,7 @@ use Tests\TestCase;
 class ProjectsTest extends TestCase
 {
     use WithFaker, RefreshDatabase;
-    
+
     /**
      * A basic feature test example.
      *
@@ -23,8 +23,10 @@ class ProjectsTest extends TestCase
             'description' => $this->faker->paragraph,
         ];
         
-        $this->post('/projects', $attributes);
+        $this->post('/projects', $attributes)->assertRedirect('/projects');
 
         $this->assertDatabaseHas('projects', $attributes);
+
+        $this->get('/projects')->assertSee($attributes['title']);
     }
 }

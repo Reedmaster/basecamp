@@ -15,7 +15,7 @@ class ProjectsController extends Controller
 
     public function show(Project $project)
     {
-        return view('projects.show', compact('projects'));
+        return view('projects.show', compact('project'));
     }
 
     public function store()

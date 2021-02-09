@@ -53,4 +53,11 @@ class ProjectsTest extends TestCase
 
         $this->post('/projects', $attributes)->assertSessionHasErrors('description');
     }
+
+    public function test_a_project_requires_an_owner()
+    {
+        $attributes = Project::factory()->raw();
+
+        $this->post('/projects', $attributes)->assertSessionHasErrors('owner');
+    }
 }

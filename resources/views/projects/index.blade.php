@@ -11,11 +11,17 @@
         </div>
     </header>
 
-    <div class="flex flex-wrap -mx-3">
+    <div class="lg:flex lg:flex-wrap -mx-3">
         @forelse ($projects as $project)
-            <div class="w-1/3 px-3 pb-6">
+            <div class="lg:w-1/3 px-3 pb-6">
                 <div class="bg-white p-5 rounded shadow" style="height: 200px">
-                    <h3 class="font-normal text-xl py-4">{{ $project->title }}</h3>
+                    <h3 class="font-normal text-xl py-4 -ml-5 mb-3 border-l-4 border-red-500 pl-4">
+                        <a href="{{ $project->path() }}"
+                            class="text-black no-underline"
+                        >
+                            {{ $project->title }}
+                        </a>
+                    </h3>
 
                     <div class="text-gray-400">{{ Str::limit($project->description) }}</div>
                 </div>

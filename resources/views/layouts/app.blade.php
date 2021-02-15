@@ -24,9 +24,11 @@
         <nav class="bg-white">
             <div class="container mx-auto">
                 <div class="flex justify-between items-center py-2">
-                    <a class="navbar-brand" href="{{ url('/') }}">
-                        {{ config('app.name', 'Laravel') }}
-                    </a>
+                    <h1 class="w-10 h-10">
+                        <a href="{{ url('/') }}">
+                            <img src="/images/noun_Cross_2114096.svg" alt="Basecamp">
+                        </a>
+                    </h1>
 
                     <div>
                         <!-- Right Side Of Navbar -->

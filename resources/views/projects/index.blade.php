@@ -1,10 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex items-center mb-3">    
-        <h1 class="mr-auto">Basecamp</h1>
-        <a href="/projects/create">New Project</a>
-    </div>
+    <header class="flex items-center mb-3 py-4">
+        <div class="flex justify-between items-center w-full">        
+            <h2 class="text-gray-500 text-lg">My Projects</h2>
+
+            <a href="/projects/create" class="text-white no-underline bg-red-400 py-2 px-4 rounded-lg">
+                New Project
+            </a>
+        </div>
+    </header>
 
     <div class="flex flex-wrap -mx-3">
         @forelse ($projects as $project)
@@ -20,4 +25,3 @@
         @endforelse
     </div> 
 @endsection
-

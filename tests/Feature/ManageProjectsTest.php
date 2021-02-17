@@ -6,6 +6,7 @@ use App\Models\Project;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class ManageProjectsTest extends TestCase
@@ -22,7 +23,7 @@ class ManageProjectsTest extends TestCase
     {
         $this->withoutExceptionHandling();
 
-        $this->actingAs(User::factory()->create());
+        $this->signIn();
 
         $this->get('/projects/create')->assertStatus(200);
 
@@ -40,30 +41,36 @@ class ManageProjectsTest extends TestCase
 
     public function test_a_user_can_view_their_project()
     {
-        $this->be(User::factory()->create());
+        $this->signIn();
         
         $project = Project::factory()->create(['owner_id' => auth()->id()]);
 
         $this->get($project->path())
             ->assertSee($project->title)
-            ->assertSee($project->description);
+            ->assertSee(Str::limit($project->description));
     }
 
     public function test_a_project_requires_a_title()
     {
-        $this->actingAs(User::factory()->create());
+        // Sign in your user
+        $this->signIn();
 
+        // You create the attributes of a project with unvalidated title
         $attributes = Project::factory()->raw(['title' => '']);
 
+        // Post request and assert errors due to unvalidated title in project
         $this->post('/projects', $attributes)->assertSessionHasErrors('title');
     }
 
     public function test_a_project_requires_a_description()
     {
-        $this->actingAs(User::factory()->create());
+        // Sign in your user
+        $this->signIn();
 
+        // You create the attributes of a project with unvalidated description
         $attributes = Project::factory()->raw(['description' => '']);
 
+        // Post request and assert errors due to unvalidated description in project
         $this->post('/projects', $attributes)->assertSessionHasErrors('description');
     }
 
@@ -79,7 +86,8 @@ class ManageProjectsTest extends TestCase
 
     public function test_authenticated_user_cannot_view_the_projects_of_others()
     {
-        $this->be(User::factory()->create());
+        // Sign in your user
+        $this->signIn();
         
         $project = Project::factory()->create();
 

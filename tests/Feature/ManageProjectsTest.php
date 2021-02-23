@@ -47,7 +47,7 @@ class ManageProjectsTest extends TestCase
 
         $this->get($project->path())
             ->assertSee($project->title)
-            ->assertSee(Str::limit($project->description));
+            ->assertSee(Str::limit($project->description, 100));
     }
 
     public function test_a_project_requires_a_title()

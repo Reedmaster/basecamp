@@ -49,7 +49,7 @@ class ProjectTasksTest extends TestCase
             Project::factory()->raw()
         );
 
-        // Add a task to project called test task
+        // Add a task to project called Test Task
         $task = $project->addTask('Test Task');
 
         // Update task to body changed and completed to true in database
@@ -94,5 +94,25 @@ class ProjectTasksTest extends TestCase
             ->assertStatus(403);
 
         // Assert database doesn't contain the attempted task post
-        $this->assertDatabaseMissing('tasks', ['body' => 'Test task']);    }
+        $this->assertDatabaseMissing('tasks', ['body' => 'Test task']);    
+    }
+
+    public function test_only_owner_of_project_may_update_a_task()
+    {
+        // Sign in your user
+        $this->signIn();
+
+        // Create a project
+        $project = Project::factory()->create();
+
+        // The project has a task added called Test Task
+        $task = $project->addTask('Test Task');
+
+        // Attempt to update a new task and receive a 403
+        $this->patch($project->path() . '/tasks/' . $task->id, ['body' => 'changed'])
+            ->assertStatus(403);
+
+        // Assert database doesn't contain the updated body
+        $this->assertDatabaseMissing('tasks', ['body' => 'changed']);    
+    }
 }

@@ -8,6 +8,7 @@ class ProjectsController extends Controller
 {
     public function index()
     {
+        // Gets projects by auth user
         $projects = auth()->user()->projects;
 
         return view('projects.index', compact('projects'));

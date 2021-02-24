@@ -11,6 +11,7 @@ class Task extends Model
 
     protected $guarded = [];
 
+    // Property that references any relationships and updates when current instance is updated, Task updates -> Project update
     protected $touches = ['project'];
 
     public function project()

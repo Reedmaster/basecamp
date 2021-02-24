@@ -32,7 +32,11 @@ class ManageProjectsTest extends TestCase
             'description' => $this->faker->paragraph,
         ];
         
-        $this->post('/projects', $attributes)->assertRedirect('/projects');
+        // Project with attributes is posted to index and saved as response
+        $response = $this->post('/projects', $attributes);
+
+        // Access Project where theattributes and pull first one which is the id then assert redirect to project path
+        $response->assertRedirect(Project::where($attributes)->first()->path());
 
         $this->assertDatabaseHas('projects', $attributes);
 

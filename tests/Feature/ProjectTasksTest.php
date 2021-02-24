@@ -109,7 +109,7 @@ class ProjectTasksTest extends TestCase
         $task = $project->addTask('Test Task');
 
         // Attempt to update a new task and receive a 403
-        $this->patch($project->path() . '/tasks/' . $task->id, ['body' => 'changed'])
+        $this->patch($task->path(), ['body' => 'changed'])
             ->assertStatus(403);
 
         // Assert database doesn't contain the updated body

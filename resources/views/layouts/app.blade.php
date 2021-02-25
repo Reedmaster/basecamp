@@ -25,7 +25,7 @@
             <div class="container mx-auto">
                 <div class="flex justify-between items-center py-2">
                     <h1 class="w-10 h-10">
-                        <a href="{{ url('/') }}">
+                        <a href="/projects">
                             <img src="/images/noun_Cross_2114096.svg" alt="Basecamp">
                         </a>
                     </h1>

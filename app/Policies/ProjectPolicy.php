@@ -6,7 +6,7 @@ use App\Models\Project;
 use App\Models\User;
 use Illuminate\Auth\Access\HandlesAuthorization;
 
-class ProjectsPolicy
+class ProjectPolicy
 {
     use HandlesAuthorization;
 

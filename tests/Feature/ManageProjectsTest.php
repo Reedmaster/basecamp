@@ -68,6 +68,9 @@ class ManageProjectsTest extends TestCase
             ])
             ->assertRedirect($project->path());
 
+        // If make get request to project path edit, then assert okay
+        $this->get($project->path() . '/edit')->assertOk();
+
         // Assert that database has the new notes
         $this->assertDatabaseHas('projects', ['notes' => 'Changed']);
     }
@@ -113,6 +116,7 @@ class ManageProjectsTest extends TestCase
 
         $this->get('/projects')->assertRedirect('login');
         $this->get('/projects/create')->assertRedirect('login');
+        $this->get('/projects/edit')->assertRedirect('login');
         $this->get($project->path())->assertRedirect('login');
         $this->post('/projects', $project->toArray())->assertRedirect('login');
     }

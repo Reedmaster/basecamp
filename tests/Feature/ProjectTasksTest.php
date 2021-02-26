@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Project;
 use App\Models\Task;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Setup\ProjectFactory;
 use Tests\TestCase;
 
 class ProjectTasksTest extends TestCase
@@ -22,17 +23,11 @@ class ProjectTasksTest extends TestCase
 
     public function test_a_project_can_have_tasks()
     {     
-        // Creates a signed in user
-        $this->signIn();
+        $project = app(ProjectFactory::class)
+            ->create();
 
-        $project = auth()->user()->projects()->create(
-            Project::factory()->raw()
-        );
-
-        // Create a project using the factory class, with the id matching the owner_id
-        $project = Project::factory()->create(['owner_id' => auth()->id()]);
-
-        $this->post($project->path() . '/tasks', ['body' => 'Test task']);
+        $this->actingAs($project->owner)
+            ->post($project->path() . '/tasks', ['body' => 'Test task']);
 
         $this->get($project->path())
             ->assertSee('Test task');
@@ -40,20 +35,14 @@ class ProjectTasksTest extends TestCase
 
     public function test_a_task_can_be_updated()
     { 
-        $this->withoutExceptionHandling();
-        // Creates a signed in user
-        $this->signIn();
+        // Calls project factory, creates a project with a single task, persists it, saves it in a variable
+        $project = app(ProjectFactory::class)
+            ->withTasks(1)
+            ->create();
 
-        // Authenticated user creates a project
-        $project = auth()->user()->projects()->create(
-            Project::factory()->raw()
-        );
-
-        // Add a task to project called Test Task
-        $task = $project->addTask('Test Task');
-
-        // Update task to body changed and completed to true in database
-        $this->patch($project->path() . '/tasks/' . $task->id, [
+        // Acting as owner to the project, update task to body changed and completed to true in database
+        $this->actingAs($project->owner)
+            ->patch($project->tasks->first()->path(), [
             'body' => 'changed',
             'completed' => true
         ]);
@@ -67,18 +56,16 @@ class ProjectTasksTest extends TestCase
 
     public function test_a_task_requires_a_body()
     {
-        // Sign in your user
-        $this->signIn();
-
-        $project = auth()->user()->projects()->create(
-            Project::factory()->raw()
-        );
+        $project = app(ProjectFactory::class)
+            ->create();
 
         // You create the attributes with unvalidated description
         $attributes = Task::factory()->raw(['body' => '']);
 
         // Post request and assert errors due to unvalidated description
-        $this->post($project->path() . '/tasks', $attributes)->assertSessionHasErrors('body');
+        $this->actingAs($project->owner)
+            ->post($project->path() . '/tasks', $attributes)
+            ->assertSessionHasErrors('body');
     }
 
     public function test_only_owner_of_project_may_add_tasks()
@@ -102,14 +89,13 @@ class ProjectTasksTest extends TestCase
         // Sign in your user
         $this->signIn();
 
-        // Create a project
-        $project = Project::factory()->create();
-
-        // The project has a task added called Test Task
-        $task = $project->addTask('Test Task');
+        // Create a project with 1 task
+        $project = app(ProjectFactory::class)
+            ->withTasks(1)
+            ->create();
 
         // Attempt to update a new task and receive a 403
-        $this->patch($task->path(), ['body' => 'changed'])
+        $this->patch($project->tasks[0]->path(), ['body' => 'changed'])
             ->assertStatus(403);
 
         // Assert database doesn't contain the updated body

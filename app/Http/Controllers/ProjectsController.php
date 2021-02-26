@@ -48,8 +48,14 @@ class ProjectsController extends Controller
             abort(403);
         }
 
-        // Only updates notes
-        $project->update(request(['notes']));
+        $attributes = request()->validate([
+            'title' => 'required', 
+            'description' => 'required|max:100',
+            'notes' => 'min:3',
+        ]);
+
+        // Updates attributes
+        $project->update($attributes);
 
         return redirect($project->path());
     }

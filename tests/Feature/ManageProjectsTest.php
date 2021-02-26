@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Str;
+use Tests\Setup\ProjectFactory;
 use Tests\TestCase;
 
 class ManageProjectsTest extends TestCase
@@ -56,12 +57,16 @@ class ManageProjectsTest extends TestCase
         $this->withoutExceptionHandling();
 
         // Create a project belonging to auth user
-        $project = Project::factory()->create(['owner_id' => auth()->id()]);
+        $project = app(ProjectFactory::class)->create();
 
         // Update the notes to new notes
-        $this->patch($project->path(), [
-            'notes' => 'Changed'
-        ]);
+        $this->actingAs($project->owner)
+            ->patch($project->path(), [
+                'title' => 'Changed',
+                'description' => 'Changed',
+                'notes' => 'Changed',
+            ])
+            ->assertRedirect($project->path());
 
         // Assert that database has the new notes
         $this->assertDatabaseHas('projects', ['notes' => 'Changed']);

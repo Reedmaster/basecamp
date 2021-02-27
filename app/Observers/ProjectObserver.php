@@ -13,12 +13,10 @@ class ProjectObserver
      * @param  \App\Models\Project  $project
      * @return void
      */
+    // Listen for when project is created and record activity
     public function created(Project $project)
     {
-        Activity::create([
-            'project_id' => $project->id,
-            'description' => 'created'
-        ]);
+        $project->recordActivity('created');
     }
 
     /**
@@ -29,10 +27,7 @@ class ProjectObserver
      */
     public function updated(Project $project)
     {
-        Activity::create([
-            'project_id' => $project->id,
-            'description' => 'updated'
-        ]);
+        $project->recordActivity('updated');
     }
 
     /**

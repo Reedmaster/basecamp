@@ -11,7 +11,7 @@ class TaskTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_it_belongs_to_a_project()
+    function test_it_belongs_to_a_project()
     {
         // Create a task
         $task = Task::factory()->create();
@@ -20,10 +20,25 @@ class TaskTest extends TestCase
         $this->assertInstanceOf(Project::class, $task->project);
     }
 
-    public function test_it_has_a_path()
+    function test_it_has_a_path()
     {
         $task = Task::factory()->create();
 
         $this->assertEquals('/projects/' . $task->project_id . '/tasks/' . $task->id, $task->path());
+    }
+
+    function test_it_can_be_completed()
+    {
+        // Generate a task
+        $task = Task::factory()->create();
+
+        // Assert that at this stage the task is incomplete
+        $this->assertFalse($task->completed);
+
+        // Call the method task complete
+        $task->complete();
+
+        // Assert true the fresh task from the database is completed
+        $this->assertTrue($task->fresh()->completed);
     }
 }

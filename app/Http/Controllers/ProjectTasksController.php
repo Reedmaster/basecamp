@@ -30,12 +30,11 @@ class ProjectTasksController extends Controller
 
         request()->validate(['body' => 'required']);
 
-        // Call task and update body and update completed
-        $task->update([
-            'body' => request('body'),
-            // has for checkboxes, if it is seen then the completed is true, if not then false
-            'completed' => request()->has('completed'),
-        ]);
+        $task->update(['body' => request('body')]);
+
+        if (request()->has('completed')) {
+            $task->complete();
+        }
 
         return redirect($project->path());
     }

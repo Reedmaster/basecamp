@@ -58,6 +58,15 @@
 
                         <button type="submit" class="btn-red">Save</button>
                     </form>
+
+                    {{-- Shows errors in list if any are requested by the form --}}
+                    @if ($errors->any())
+                        <div class="field mt-6">
+                            @foreach ($errors->all() as $error)
+                                <li class="text-sm text-red-500">{{ $error }}</li>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
             </div>
 

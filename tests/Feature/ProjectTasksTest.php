@@ -44,6 +44,25 @@ class ProjectTasksTest extends TestCase
         $this->actingAs($project->owner)
             ->patch($project->tasks->first()->path(), [
             'body' => 'changed',
+        ]);
+
+        // Assert database has the new values
+        $this->assertDatabaseHas('tasks', [
+            'body' => 'changed',
+        ]);
+    }
+
+    public function test_a_task_can_be_marked_as_complete()
+    { 
+        // Calls project factory, creates a project with a single task, persists it, saves it in a variable
+        $project = app(ProjectFactory::class)
+            ->withTasks(1)
+            ->create();
+
+        // Acting as owner to the project, update task to body changed and completed to true in database
+        $this->actingAs($project->owner)
+            ->patch($project->tasks->first()->path(), [
+            'body' => 'changed',
             'completed' => true
         ]);
 
@@ -51,6 +70,33 @@ class ProjectTasksTest extends TestCase
         $this->assertDatabaseHas('tasks', [
             'body' => 'changed',
             'completed' => true
+        ]);
+    }
+
+    public function test_a_task_can_be_marked_as_incomplete()
+    { 
+        // Calls project factory, creates a project with a single task, persists it, saves it in a variable
+        $project = app(ProjectFactory::class)
+            ->withTasks(1)
+            ->create();
+
+        // Acting as owner to the project, update task to body changed and completed to true in database
+        $this->actingAs($project->owner)
+            ->patch($project->tasks->first()->path(), [
+            'body' => 'changed',
+            'completed' => true
+        ]);
+
+        // Update task to body changed and completed to false in database
+        $this->patch($project->tasks->first()->path(), [
+            'body' => 'changed',
+            'completed' => false
+        ]);
+
+        // Assert database has the new values
+        $this->assertDatabaseHas('tasks', [
+            'body' => 'changed',
+            'completed' => false
         ]);
     }
 

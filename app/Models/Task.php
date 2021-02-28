@@ -23,18 +23,14 @@ class Task extends Model
     {
         parent::boot();
 
-        // When a task is created we generate activity
-        static::created(function ($task) {
-            $task->project->recordActivity('created_task');
-        });
+        // // When a task is created we generate activity
+        // static::created(function ($task) {
+        //     $task->project->recordActivity('created_task');
+        // });
 
-        // Task is updated, if it is completed then changed description to 'completed_task'
-        static::updated(function ($task) {
-            // If not completed then return
-            if (! $task->completed) return;
-
-            $task->project->recordActivity('completed_task');
-        });
+        // static::deleted(function ($task) {
+        //     $task->project->recordActivity('deleted_task');
+        // });
     }
 
     public function project()
@@ -47,10 +43,37 @@ class Task extends Model
     {
         // Update task completed field to true
         $this->update(['completed' => true]);
+
+        // Record activity
+        $this->recordActivity('completed_task');
+    }
+
+    public function incomplete()
+    {
+        // Update task completed field to false
+        $this->update(['completed' => false]);
+
+        // Record activity
+        $this->recordActivity('uncompleted_task');
     }
 
     public function path()
     {
         return "/projects/{$this->project->id}/tasks/{$this->id}";
+    }
+
+    // Activity feed for the project
+    public function activity()
+    {
+        return $this->morphMany(Activity::class, 'subject')->latest();
+    }
+
+    // Record activity for a project
+    public function recordActivity($description)
+    {
+        $this->activity()->create([
+            'project_id' => $this->project_id,
+            'description' => $description,
+        ]);
     }
 }

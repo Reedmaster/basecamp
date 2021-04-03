@@ -11,6 +11,7 @@ class Activity extends Model
 
     protected $guarded = [];
 
+    # When an activity is generated into the array, the changes are converted into an array
     protected $casts = [
         'changes' => 'array'
     ];
@@ -18,5 +19,10 @@ class Activity extends Model
     public function subject()
     {
         return $this->morphTo();
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 }

@@ -1,1 +1,1 @@
-You created {{ $activity->subject->body }}
+{{ $activity->subject->body }} <div class="inline-block text-gray-400">created</div>

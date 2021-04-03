@@ -19,20 +19,6 @@ class Task extends Model
         'completed' => 'boolean'
     ];
 
-    protected static function boot()
-    {
-        parent::boot();
-
-        // // When a task is created we generate activity
-        // static::created(function ($task) {
-        //     $task->project->recordActivity('created_task');
-        // });
-
-        // static::deleted(function ($task) {
-        //     $task->project->recordActivity('deleted_task');
-        // });
-    }
-
     public function project()
     {
         // A task belongs to a project

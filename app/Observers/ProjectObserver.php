@@ -16,11 +16,13 @@ class ProjectObserver
     // Listen for when project is created and record activity
     public function created(Project $project)
     {
-        $project->recordActivity('created');
+        $project->recordActivity('created_project');
     }
 
+    # Listen for when project is being updated and store the old values before the update
     public function updating(Project $project)
     {
+        # Store old values
         $project->old = $project->getOriginal();
     }
 
@@ -32,7 +34,7 @@ class ProjectObserver
      */
     public function updated(Project $project)
     {
-        $project->recordActivity('updated');
+        $project->recordActivity('updated_project');
     }
 
     /**

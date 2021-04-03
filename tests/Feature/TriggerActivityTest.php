@@ -23,7 +23,8 @@ class TriggerActivityTest extends TestCase
         // Get the most recent activity
         tap($project->activity->last(), function($activity) {
             // Assert that the activity generated has 'created' in its description
-            $this->assertEquals('created', $activity->description) ;
+            $this->assertEquals('created_project', $activity->description) ;
+            # Assert that when a project is created activity changes returns as null
             $this->assertNull($activity->changes);
         });
     }
@@ -43,13 +44,15 @@ class TriggerActivityTest extends TestCase
         // Get the most recent activity
         tap($project->activity->last(), function($activity) use ($originalTitle) {
             // Assert that the most recent activity has a description of 'updated'
-            $this->assertEquals('updated', $activity->description);
+            $this->assertEquals('updated_project', $activity->description);
 
+            #
             $expected = [
                 'before' => ['title' => $originalTitle],
                 'after' => ['title' => 'Changed'],
             ];
 
+            # Assert what we expected is equal to activity changes
             $this->assertEquals($expected, $activity->changes);
         });
     }

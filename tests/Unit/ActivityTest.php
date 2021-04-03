@@ -15,10 +15,10 @@ class ActivityTest extends TestCase
      *
      * @return void
      */
-    function test_it_has_a_user()
-    {
-        $project = Project::factory()->create();
+    // function test_it_has_a_user()
+    // {
+    //     $project = Project::factory()->create();
 
-        $this->assertInstanceOf(User::class, $project->activity->first()->user);
-    }
+    //     $this->assertInstanceOf(User::class, $project->activity->first()->user);
+    // }
 }

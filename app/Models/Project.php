@@ -12,6 +12,7 @@ class Project extends Model
 
     protected $guarded = [];
 
+    # Old values are stored here before the project is updated
     public $old = [];
 
     public function path()
@@ -43,17 +44,21 @@ class Project extends Model
     // Record activity for a project
     public function recordActivity($description)
     {
+        # When activity is created, create a description and give the changes
         $this->activity()->create([
             'description' => $description,
-            'changes' => $this->activityChanges()
+            'changes' => $this->activityChanges($description)
         ]);
     }
 
     protected function activityChanges()
     {
+        # If a project was changed then return a before and after
         if ($this->wasChanged()) {
             return [
+                # Create a before array with old attributes, except 'updated_at'
                 'before' => Arr::except(array_diff($this->old, $this->getAttributes()), 'updated_at'),
+                # Create an after array with changed attributes, except 'updated_at'
                 'after' => Arr::except($this->getChanges(), 'updated_at'),
             ];
         }

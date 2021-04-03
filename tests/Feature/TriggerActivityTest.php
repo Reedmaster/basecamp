@@ -42,7 +42,7 @@ class TriggerActivityTest extends TestCase
         $this->assertCount(2, $project->activity);
 
         // Get the most recent activity
-        tap($project->activity->last(), function($activity) use ($originalTitle) {
+        tap($project->activity->last(), function ($activity) use ($originalTitle) {
             // Assert that the most recent activity has a description of 'updated'
             $this->assertEquals('updated_project', $activity->description);
 

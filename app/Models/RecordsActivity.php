@@ -6,9 +6,47 @@ use Illuminate\Support\Arr;
 
 trait RecordsActivity
 {
-    # Old values are stored here before the project is updated
-    public $old = [];
+    # oldAttributes are stored here before the project is updated
+    public $oldAttributes = [];
+
+    # Boot method called on trait needs to have syntax of trait name following
+    # Static so method is accessible without instantiation
+    public static function bootRecordsActivity()
+    {
+        # foreach recordable events as an event, when the model is created...
+        foreach (self::recordableEvents() as $event) {
+            static::$event(function ($model) use ($event) {
+
+                # Record activity of the event type
+                $model->recordActivity($model->activityDescription($event));
+            });
+
+            # if event is 'updated', which only occurs on Project model...
+            if ($event === 'updated') {
+                # store oldAttributes of a model
+                static::updating(function ($model) {
+                    $model->oldAttributes = $model->getOriginal();
+                });
+            }
+        }
+    }
     
+    protected function activityDescription($description)
+    {
+        # Return a lowercase string of event description
+        return "{$description}_" . strtolower(class_basename($this));
+    }
+
+    protected static function recordableEvents()
+    {
+        # If user has created a property on model override default $recordableEvents, else use defaults
+        if (isset(static::$recordableEvents)) {
+            return static::$recordableEvents;
+        } else {
+            return ['created', 'updated', 'deleted'];
+        }
+    }
+
     // Record activity for a project
     public function recordActivity($description)
     {
@@ -21,13 +59,19 @@ trait RecordsActivity
         ]);
     }
 
+    // Activity feed for the project
+    public function activity()
+    {
+        return $this->morphMany(Activity::class, 'subject')->latest();
+    }
+
     protected function activityChanges()
     {
         # If a project was changed then return a before and after
         if ($this->wasChanged()) {
             return [
-                # Create a before array with old attributes, except 'updated_at'
-                'before' => Arr::except(array_diff($this->old, $this->getAttributes()), 'updated_at'),
+                # Create a before array with oldAttributes, except 'updated_at'
+                'before' => Arr::except(array_diff($this->oldAttributes, $this->getAttributes()), 'updated_at'),
                 # Create an after array with changed attributes, except 'updated_at'
                 'after' => Arr::except($this->getChanges(), 'updated_at'),
             ];

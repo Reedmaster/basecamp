@@ -20,6 +20,9 @@ class Task extends Model
         'completed' => 'boolean'
     ];
 
+    # Overrides default $recordableEvents
+    protected static $recordableEvents = ['created', 'deleted'];
+
     public function project()
     {
         // A task belongs to a project
@@ -47,11 +50,5 @@ class Task extends Model
     public function path()
     {
         return "/projects/{$this->project->id}/tasks/{$this->id}";
-    }
-
-    // Activity feed for the project
-    public function activity()
-    {
-        return $this->morphMany(Activity::class, 'subject')->latest();
     }
 }

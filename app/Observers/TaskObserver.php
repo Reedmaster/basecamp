@@ -17,6 +17,14 @@ class TaskObserver
         $task->recordActivity('created_task');
     }
 
+    # Listen for when project is being updated and store the old values before the update
+    public function updating(Task $task)
+    {
+        # Store old values
+        $task->old = $task->getOriginal();
+    }
+
+
     /**
      * Handle the Task "updated" event.
      *

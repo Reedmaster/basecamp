@@ -34,7 +34,7 @@ trait RecordsActivity
     protected function activityDescription($description)
     {
         # Return a lowercase string of event description
-        return "{$description}_" . strtolower(class_basename($this));
+        return "{$description}_" . strtolower(class_basename($this)); # e.g. updated_project
     }
 
     protected static function recordableEvents()

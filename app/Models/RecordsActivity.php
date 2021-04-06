@@ -30,7 +30,7 @@ trait RecordsActivity
             }
         }
     }
-    
+
     protected function activityDescription($description)
     {
         # Return a lowercase string of event description
@@ -43,7 +43,7 @@ trait RecordsActivity
         if (isset(static::$recordableEvents)) {
             return static::$recordableEvents;
         } else {
-            return ['created', 'updated', 'deleted'];
+            return ['created', 'updated'];
         }
     }
 
@@ -52,11 +52,22 @@ trait RecordsActivity
     {
         # When activity is created, create a description and give the changes
         $this->activity()->create([
+            'user_id' => $this->activityOwner()->id,
             'description' => $description,
             'changes' => $this->activityChanges(),
             # If the class basename is 'Project' then project_id is id, else project_id is project_id
             'project_id' => class_basename($this) === 'Project' ? $this->id : $this->project_id,
         ]);
+    }
+
+    protected function activityOwner()
+    {
+        if (auth()->check()) {
+            return auth()->user();
+        }
+
+        # If a given class has a project relationship, use its owner, if not, then it is Project and use its owner
+        return ($this->project ?? $this)->owner;
     }
 
     // Activity feed for the project

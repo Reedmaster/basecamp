@@ -15,6 +15,7 @@ class CreateActivitiesTable extends Migration
     {
         Schema::create('activities', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('project_id')->constrained('projects')->onDelete('cascade');
             // the subject, such as a Task, has an id, so when you ask for the subject of the activity and it will point to the subject and its id, and you can access attributes on Task
             $table->nullableMorphs('subject');

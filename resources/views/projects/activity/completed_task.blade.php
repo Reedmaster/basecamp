@@ -1,1 +1,1 @@
-{{  $activity->subject->body }} <div class="inline-block text-gray-400">completed</div>
+{{  $activity->subject->body }} <div class="inline-block text-gray-400">completed by {{ $activity->user->name }}</div>

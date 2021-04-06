@@ -2,9 +2,8 @@
 
 namespace Tests\Unit;
 
-use App\Models\Project;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\Setup\ProjectFactory;
 use Tests\TestCase;
 
 class ActivityTest extends TestCase
@@ -15,10 +14,15 @@ class ActivityTest extends TestCase
      *
      * @return void
      */
-    // function test_it_has_a_user()
-    // {
-    //     $project = Project::factory()->create();
+    function test_it_has_a_user()
+    {
+        $user = $this->signIn();
 
-    //     $this->assertInstanceOf(User::class, $project->activity->first()->user);
-    // }
+        $project = app(ProjectFactory::class)
+            ->ownedBy($user)
+            ->create();
+
+        # Assert that the id of user of activity is equal to id of signed in user
+        $this->assertEquals($user->id, $project->activity->first()->user->id);
+    }
 }

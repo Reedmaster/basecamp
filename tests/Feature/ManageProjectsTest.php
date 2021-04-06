@@ -50,6 +50,22 @@ class ManageProjectsTest extends TestCase
             ->assertSee($attributes['notes']);
     }
 
+    function test_user_can_delete_project()
+    {
+        $this->withoutExceptionHandling();
+        
+        # Create a project belonging to auth user
+        $project = app(ProjectFactory::class)->create();
+
+        # Acting as project owner, delete the project and redirect to /project
+        $this->actingAs($project->owner)
+            ->delete($project->path())
+            ->assertRedirect('/projects');
+
+        # Assert that the projects id is missing in the database
+        $this->assertDatabaseMissing('projects', $project->only('id'));
+    }
+
     public function test_user_can_update_project()
     {
         $this->signIn();

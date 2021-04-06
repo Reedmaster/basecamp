@@ -1,1 +1,1 @@
-{{  $activity->subject->body }} <div class="inline-block text-gray-400">uncompleted</div>
+{{  $activity->subject->body }} <div class="inline-block text-gray-400">uncompleted by {{ $activity->user->name }}</div>

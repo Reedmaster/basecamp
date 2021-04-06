@@ -44,15 +44,10 @@ class ProjectsController extends Controller
 
     public function update(Project $project)
     {
-        // If auth user is not owner of project, then abort
-        if (auth()->user()->isNot($project->owner)) {
-            abort(403);
-        }
-
-        $attributes = $this->validateRequest();
+        $this->authorize('update', $project);
 
         // Updates attributes
-        $project->update($attributes);
+        $project->update($this->validateRequest());
 
         return redirect($project->path());
     }
@@ -60,6 +55,9 @@ class ProjectsController extends Controller
     # Delete the project
     public function destroy(Project $project)
     {
+        // If auth user is not owner of project, then abort
+        $this->authorize('update', $project);
+
         $project->delete();
 
         return redirect('/projects');

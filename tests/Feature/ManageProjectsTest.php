@@ -33,7 +33,7 @@ class ManageProjectsTest extends TestCase
             'description' => $this->faker->sentence,
             'notes' => 'Project notes here.',
         ];
-        
+
         // Project with attributes is posted to index and saved as response
         $response = $this->post('/projects', $attributes);
 
@@ -50,10 +50,25 @@ class ManageProjectsTest extends TestCase
             ->assertSee($attributes['notes']);
     }
 
+    function test_unauthorised_cannot_delete_project()
+    {
+        # Create a project belonging to auth user
+        $project = app(ProjectFactory::class)->create();
+
+        # As a guest delete the project and redirect to /login
+        $this->delete($project->path())
+            ->assertRedirect('/login');
+
+        $this->signIn();
+
+        $this->delete($project->path())
+            ->assertStatus(403);
+    }
+
     function test_user_can_delete_project()
     {
         $this->withoutExceptionHandling();
-        
+
         # Create a project belonging to auth user
         $project = app(ProjectFactory::class)->create();
 
@@ -110,7 +125,7 @@ class ManageProjectsTest extends TestCase
     public function test_a_user_can_view_their_project()
     {
         $this->signIn();
-        
+
         $project = Project::factory()->create(['owner_id' => auth()->id()]);
 
         $this->get($project->path())
@@ -157,7 +172,7 @@ class ManageProjectsTest extends TestCase
     {
         // Sign in your user
         $this->signIn();
-        
+
         $project = Project::factory()->create();
 
         $this->get($project->path())->assertStatus(403);
@@ -167,7 +182,7 @@ class ManageProjectsTest extends TestCase
     {
         // Sign in your user
         $this->signIn();
-        
+
         $project = Project::factory()->create();
 
         $this->patch($project->path(), [])->assertStatus(403);

@@ -32,9 +32,14 @@ class Project extends Model
         return $this->tasks()->create(['body' => $body]);
     }
 
-    // Activity feed for the project
-    public function activity()
+    public function invite(User $user)
     {
-        return $this->hasMany(Activity::class)->latest();
+        return $this->members()->attach($user);
+    }
+
+    public function members()
+    {
+        # Think that a project can have many members, but a member can also have many projects
+        return $this->belongsToMany(User::class, 'project_members');
     }
 }

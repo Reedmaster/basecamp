@@ -33,6 +33,7 @@ class ProjectsController extends Controller
         $attributes = $this->validateRequest();
 
         $project = auth()->user()->projects()->create($attributes);
+        $project->members()->syncWithoutDetaching(auth()->user());
 
         return redirect($project->path());
     }

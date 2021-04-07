@@ -20,7 +20,7 @@ class ManageProjectsTest extends TestCase
      * @return void
      */
 
-    public function test_a_user_can_create_a_project()
+    function test_a_user_can_create_a_project()
     {
         $this->withoutExceptionHandling();
 
@@ -48,6 +48,11 @@ class ManageProjectsTest extends TestCase
             ->assertSee($attributes['title'])
             ->assertSee($attributes['description'])
             ->assertSee($attributes['notes']);
+    }
+
+    function test_invited_user_can_see_all_projects_on_their_dashboard()
+    {
+
     }
 
     function test_unauthorised_cannot_delete_project()
@@ -81,7 +86,7 @@ class ManageProjectsTest extends TestCase
         $this->assertDatabaseMissing('projects', $project->only('id'));
     }
 
-    public function test_user_can_update_project()
+    function test_user_can_update_project()
     {
         $this->signIn();
 
@@ -106,7 +111,7 @@ class ManageProjectsTest extends TestCase
         $this->assertDatabaseHas('projects', ['notes' => 'Changed']);
     }
 
-    public function test_user_can_update_a_projects_notes()
+    function test_user_can_update_a_projects_notes()
     {
         // Create a project belonging to auth user
         $project = app(ProjectFactory::class)->create();
@@ -122,7 +127,7 @@ class ManageProjectsTest extends TestCase
         $this->assertDatabaseHas('projects', ['notes' => 'Changed']);
     }
 
-    public function test_a_user_can_view_their_project()
+    function test_a_user_can_view_their_project()
     {
         $this->signIn();
 
@@ -133,7 +138,7 @@ class ManageProjectsTest extends TestCase
             ->assertSee(Str::limit($project->description, 100));
     }
 
-    public function test_a_project_requires_a_title()
+    function test_a_project_requires_a_title()
     {
         // Sign in your user
         $this->signIn();
@@ -145,7 +150,7 @@ class ManageProjectsTest extends TestCase
         $this->post('/projects', $attributes)->assertSessionHasErrors('title');
     }
 
-    public function test_a_project_requires_a_description()
+    function test_a_project_requires_a_description()
     {
         // Sign in your user
         $this->signIn();
@@ -157,7 +162,7 @@ class ManageProjectsTest extends TestCase
         $this->post('/projects', $attributes)->assertSessionHasErrors('description');
     }
 
-    public function test_guest_cannot_manage_projects()
+    function test_guest_cannot_manage_projects()
     {
         $project = Project::factory()->create();
 
@@ -168,7 +173,7 @@ class ManageProjectsTest extends TestCase
         $this->post('/projects', $project->toArray())->assertRedirect('login');
     }
 
-    public function test_authenticated_user_cannot_view_the_projects_of_others()
+    function test_authenticated_user_cannot_view_the_projects_of_others()
     {
         // Sign in your user
         $this->signIn();
@@ -178,7 +183,7 @@ class ManageProjectsTest extends TestCase
         $this->get($project->path())->assertStatus(403);
     }
 
-    public function test_authenticated_user_cannot_update_the_projects_of_others()
+    function test_authenticated_user_cannot_update_the_projects_of_others()
     {
         // Sign in your user
         $this->signIn();

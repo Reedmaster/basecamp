@@ -52,7 +52,8 @@ trait RecordsActivity
     {
         # When activity is created, create a description and give the changes
         $this->activity()->create([
-            'user_id' => $this->activityOwner()->id,
+            # If a given class has a project relationship, use its owner, if not, then it is Project and use its owner
+            'user_id' => ($this->project ?? $this)->owner->id,
             'description' => $description,
             'changes' => $this->activityChanges(),
             # If the class basename is 'Project' then project_id is id, else project_id is project_id
@@ -60,19 +61,13 @@ trait RecordsActivity
         ]);
     }
 
-    protected function activityOwner()
-    {
-        if (auth()->check()) {
-            return auth()->user();
-        }
-
-        # If a given class has a project relationship, use its owner, if not, then it is Project and use its owner
-        return ($this->project ?? $this)->owner;
-    }
-
     // Activity feed for the project
     public function activity()
     {
+        if (get_class($this) === Project::class) {
+            return $this->hasMany(Activity::class)->latest();
+        }
+
         return $this->morphMany(Activity::class, 'subject')->latest();
     }
 

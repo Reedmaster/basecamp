@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Models\Project;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -23,7 +24,7 @@ class ProjectTest extends TestCase
 
         $this->assertInstanceOf('App\Models\User', $project->owner);
     }
-    
+
     public function test_it_can_add_a_task()
     {
         $project = Project::factory()->create();
@@ -33,5 +34,17 @@ class ProjectTest extends TestCase
         $this->assertCount(1, $project->tasks);
         // Assert true that the tasks in project contains a task that was just created
         $this->assertTrue($project->tasks->contains($task));
+    }
+
+    function test_it_can_invite_user()
+    {
+        # We have a project
+        $project = Project::factory()->create();
+
+        # The project invites a user
+        $project->invite($user = User::factory()->create());
+
+        # Assert true that the projects members contains that user
+        $this->assertTrue($project->members->contains($user));
     }
 }

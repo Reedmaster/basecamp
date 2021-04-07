@@ -15,7 +15,7 @@ class ProjectTasksController extends Controller
         }
 
         request()->validate(['body' => 'required']);
-        
+
         $project->addTask(request('body'));
 
         return redirect($project->path());
@@ -24,14 +24,10 @@ class ProjectTasksController extends Controller
     public function update(Project $project, Task $task)
     {
         // If the auth user is not the owner of the task then abort
-        if (auth()->user()->isNot($task->project->owner)) {
-            abort(403);
-        }
-
-        request()->validate(['body' => 'required']);
+        $this->authorize('update', $task->project);
 
         // Update body of task
-        $task->update(['body' => request('body')]);
+        $task->update(request()->validate(['body' => 'required']));
 
         // If there is completion status then complete task, else incomplete task
         if (request('completed')) {
